@@ -58,6 +58,18 @@ for /f "tokens=*" %%a in ('wevtutil el') do (
     echo %%a
     wevtutil cl "%%a"
 )
+::tmac
+curl -L "https://github.com/saawkt/files/raw/refs/heads/main/tmac/oui.db" -o "C:\Windows\temp\oui.db"
+curl -L "https://github.com/saawkt/files/raw/refs/heads/main/tmac/TMAC.exe" -o "C:\Windows\temp\tmac.exe"
+cls
+cd /d "C:\Windows\temp"
+tmac.exe -n Ethernet -r -s 
+tmac.exe -n Ethernet -re -s 
+timeout /t 5 /nobreak >nul
+taskkill /f /im tmac.exe /t 
+taskkill /f /im TMAC.exe /t
+del C:\Windows\temp\tmac.exe
+del C:\Windows\temp\oui.db 
 cls
 taskkill /f /im Steam.exe /t
 set hostspath=%windir%\System32\drivers\etc\hosts
