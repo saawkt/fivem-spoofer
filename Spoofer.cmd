@@ -1,5 +1,69 @@
 @echo off
+title FiveM Spoofer, made by misenplase and saawkt
+setlocal enabledelayedexpansion
+
+:menu
+cls
+echo 1. Spoofer Ban Global
+echo 2. Spoofer Ban Global + HWID Spoofer
+echo 3. Serial Checker
+echo.
+set /p input=":"
+if "%input%"=="1" (
+    goto global
+) else if "%input%"=="2" (
+    goto hwid
+) else if "%input%"=="3" (
+    goto serial
+) else (
+    echo invalid choice. try again.
+    pause
+    goto menu
+)
+
+:serial
+echo Bios
+wmic bios get serialnumber
+wmic csproduct get uuid
+echo CPU
+wmic cpu get serialnumber
+wmic cpu get processorid
+echo Diskdrive
+wmic diskdrive get serialnumber
+echo Baseboard serialnumber
+wmic baseboard get serialnumber
+echo Baseboard manufacturer
+wmic baseboard get manufacturer
+echo MacAddress
+wmic path Win32_NetworkAdapter where "PNPDeviceID like '%%PCI%%' AND NetConnectionStatus=2 AND AdapterTypeID='0'" get MacAddress
+pause /nobreak >nul 
+goto menu
+
+:global
+certutil -URLCache * delete 
+netsh int ip reset 
+netsh int ipv4 reset 
+netsh int ipv6 reset 
+ipconfig / >nul
+ipconfig /release >nul
+ipconfig /renew >nul
+ipconfig /flushdns >nul
+netsh advfirewall reset
+netsh winsock reset
+netsh int ip reset
+netsh winsock reset 
+netsh advfirewall reset
+cls
+for /f "tokens=*" %%a in ('wevtutil el') do (
+    echo %%a
+    wevtutil cl "%%a"
+)
+cls
 taskkill /f /im Steam.exe /t
+set hostspath=%windir%\System32\drivers\etc\hosts
+echo 127.0.0.1 xboxlive.com >> %hostspath%
+echo 127.0.0.1 user.auth.xboxlive.com >> %hostspath%
+echo 127.0.0.1 presence-heartbeat.xboxlive.com >> %hostspath%
 REG DELETE HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSLicensing\HardwareID /f
 REG DELETE HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSLicensing\Store /f
 REG DELETE HKEY_CURRENT_USER\Software\WinRAR\ArcHistory /f
@@ -25,6 +89,21 @@ del /y c:\windows\history
 del /y c:\windows\cookies
 del /y c:\windows\recent
 del /y c:\windows\spool\printers
+del /s /q /f "%LocalAppData%\FiveM\FiveM.app\cfx_curl_x86_64.dll
+rmdir /s /q "%LocalAppData%\FiveM\FiveM.app\cache\Browser"
+rmdir /s /q "%LocalAppData%\FiveM\FiveM.app\cache\db"
+rmdir /s /q "%LocalAppData%\FiveM\FiveM.app\cache\dunno"
+rmdir /s /q "%LocalAppData%\FiveM\FiveM.app\cache\priv"
+rmdir /s /q "%LocalAppData%\FiveM\FiveM.app\cache\servers"
+rmdir /s /q "%LocalAppData%\FiveM\FiveM.app\cache\subprocess"
+rmdir /s /q "%LocalAppData%\FiveM\FiveM.app\cache\unconfirmed"
+del /s /q /f %LocalAppData%\FiveM\FiveM.app\steam_api64.dll
+rmdir /s /q "%LocalAppData%\FiveM\FiveM.app\cache\authbrowser"
+del /s /q /f "%LocalAppData%\FiveM\FiveM.app\cache\crashometry"
+del /s /q /f "%LocalAppData%\FiveM\FiveM.app\cache\launcher_skip"
+del /s /q /f "%LocalAppData%\FiveM\FiveM.app\cache\launcher_skip_mtl2"
+rmdir /s /q "%LocalAppData%\DigitalEntitlements"
+del /s /q /f %LocalAppData%\FiveM\FiveM.app\profiles.dll
 del /s /q /f %LocalAppData%\FiveM\FiveM.app\CitizenFX_SubProcess_chrome.bin
 del /s /q /f %LocalAppData%\FiveM\FiveM.app\CitizenFX_SubProcess_game.bin
 del /s /q /f %LocalAppData%\FiveM\FiveM.app\CitizenFX_SubProcess_game_372.bin
@@ -41,44 +120,37 @@ del /s /q /f %LocalAppData%\FiveM\FiveM.app\profiles.dll
 del /s /q /f %LocalAppData%\FiveM\FiveM.app\cfx_curl_x86_64.dll
 del /s /q /f %LocalAppData%\FiveM\FiveM.app\CitizenFX.ini
 del /s /q /f %LocalAppData%\FiveM\FiveM.app\caches.XML
+del /s /q /f %LocalAppData%\FiveM\FiveM.app\discord.dll
 del /s /q /f %LocalAppData%\FiveM\FiveM.app\adhesive.dll
-cls
-cls
+del /s /q /f "%LocalAppData%\FiveM\FiveM.app\crashes\*.*"
+del /s /q /f "%LocalAppData%\FiveM\FiveM.app\mods\*.*"
+del /s /q /f "%LocalAppData%\FiveM\FiveM.app\logs\*.*"
 taskkill /f /im Steam.exe /t
-cls
 REG DELETE HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSLicensing\HardwareID /f
 REG DELETE HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSLicensing\Store /f
-cls
 REG DELETE HKEY_CURRENT_USER\Software\WinRAR\ArcHistory /f
 REG DELETE HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\bam\State\UserSettings\S -1-5-21-1282084573-1681065996-3115981261-1001 /va /f
 REG DELETEH KEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\FeatureUsage\ShowJumpView /f
-cls
 REG DELETEH KEY_CURRENT_USER\Software\Classes\Local Settings\Software\Microsoft\Windows\Shell\MuiCache /f
 REG DELETE HKEY_CURRENT_USER\Software\WinRAR\ArcHistory /f
 REG DELETE HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\FeatureUsage\AppSwitched /f
-cls
 REG DELETE HKEY_CLASSES_ROOT\Local Settings\Software\Microsoft\Windows\Shell\MuiCache /f
 REG DELETE HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\FeatureUsage\ShowJumpView /f
 REG DELETE HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\bam\State\UserSettings\S-1-5-21-332004695-2829936588-140372829-1002 /f
-cls
 REG DELETE HKEY_CLASSES_ROOT\Local Settings\Software\Microsoft\Windows\Shell\MuiCache /f
 REG DELETE HKEY_CURRENT_USER\Software\Classes\Local Settings\Software\Microsoft\Windows\Shell\MuiCache /f
 REG DELETE HKEY_CURRENT_USER\Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Compatibility Assistant\Store /f
 REG DELETE HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\FeatureUsage\AppSwitched /f
-cls
 REG DELETE HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\bam\State\UserSettings\S -1-5-21-1282084573-1681065996-3115981261-1001 /f
 REG DELETE HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\FeatureUsage\AppSwitched /f
 del /y c:\windows\tempor~1
 del /y c:\windows\temp
 del /y c:\windows\tmp
-cls
 del /y c:\windows\ff *.tmp
 del /y c:\windows\history
 del /y c:\windows\cookies
 del /y c:\windows\recent
 del /y c:\windows\spool\printers
-cls
-timeout 2 >nul
 rmdir /s /q %userprofile%\AppData\Roaming\CitizenFX
 del /s /q /f %LocalAppData%\FiveM\FiveM.app\discord.dll
 RENAME %userprofile%\AppData\Roaming\discord\1.*\modules\discord_rpc SPOOFER
@@ -244,4 +316,43 @@ rmdir /s /q "F:\MSOCache"
 del /f /s /q "F:\MSOCache\*.*"
 rmdir /s /q "F:\desktop.ini:CachedTiles" 
 del /f /s /q "F:\desktop.ini:CachedTiles\*.*"
-exit
+exit /b 
+
+:hwid
+curl -L "https://github.com/saawkt/fivem-spoofer/raw/refs/heads/main/amidewin.zip" -o "C:\Windows\Temp\amidewin.zip"
+echo wait...
+powershell -command "Expand-Archive -Path 'C:\Windows\Temp\amidewin.zip' -DestinationPath 'C:\Windows\temp\amidewin'"
+del C:\Windows\Temp\amidewin.zip
+cd /d C:\Windows\Temp\amidewin\amidewin
+AMIDEWINx64.EXE /SU auto
+AMIDEWINx64.EXE /SS "Default string"
+AMIDEWINx64.EXE /SV "1.0"
+AMIDEWINx64.EXE /CSK "Default string"
+AMIDEWINx64.EXE /CM  "Default string"
+AMIDEWINx64.EXE /SP "MS-7D22"
+AMIDEWINx64.EXE /SM "Micro-Star International Co., Ltd."
+AMIDEWINx64.EXE /SK "Default string"
+AMIDEWINx64.EXE /SF "Default string"
+AMIDEWINx64.EXE /BM "Micro-Star International Co., Ltd."
+AMIDEWINx64.EXE /BP "H510M-A PRO (MS-7D22)"
+AMIDEWINx64.EXE /BV "1.0"
+AMIDEWINx64.EXE /BT "Default string"
+AMIDEWINx64.EXE /BLC "Default string"
+AMIDEWINx64.EXE /PSN "To Be Filled By O.E.M."
+AMIDEWINx64.EXE /PAT "To Be Filled By O.E.M."
+AMIDEWINx64.EXE /PPN "To Be Filled By O.E.M."
+AMIDEWINx64.EXE /CSK "Default string"
+AMIDEWINx64.EXE /CS "Default string"
+AMIDEWINx64.EXE /CV "1.0"
+AMIDEWINx64.EXE /CM "Micro-Star International Co., Ltd."
+AMIDEWINx64.EXE /CA "Default string"
+AMIDEWINx64.EXE /CO "0000 0000h"
+AMIDEWINx64.EXE /CT "03h"
+AMIDEWINx64.EXE /IV "3.80"
+AMIDEWINx64.EXE /IVN "American Megatrends International, LLC."
+AMIDEWINx64.EXE /BS "%random%%random%"
+net stop winmgmt /y
+net start winmgmt /y
+sc stop winmgmt
+sc start winmgmt
+goto spoofer
