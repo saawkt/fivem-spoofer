@@ -6,7 +6,9 @@ setlocal enabledelayedexpansion
 cls
 echo 1. Spoofer Ban Global
 echo 2. Spoofer Ban Global + HWID Spoofer
-echo 3. Serial Checker
+echo 3. Install Cloudflare Warp (to change the ip)
+echo 4. Serial Checker
+echo 5. Exit
 echo.
 set /p input=":"
 if "%input%"=="1" (
@@ -14,7 +16,11 @@ if "%input%"=="1" (
 ) else if "%input%"=="2" (
     goto hwid
 ) else if "%input%"=="3" (
+    goto warp
+) else if "%input%"=="4" (
     goto serial
+) else if "%input%"=="5" (
+    goto exit3
 ) else (
     echo invalid choice. try again.
     pause
@@ -22,6 +28,7 @@ if "%input%"=="1" (
 )
 
 :serial
+cls
 echo Bios
 wmic bios get serialnumber
 wmic csproduct get uuid
@@ -36,15 +43,18 @@ echo Baseboard manufacturer
 wmic baseboard get manufacturer
 echo MacAddress
 wmic path Win32_NetworkAdapter where "PNPDeviceID like '%%PCI%%' AND NetConnectionStatus=2 AND AdapterTypeID='0'" get MacAddress
+echo.
+echo Press enter to return to the menu
 pause /nobreak >nul 
+cls
 goto menu
 
 :global
+cls
 certutil -URLCache * delete 
 netsh int ip reset 
 netsh int ipv4 reset 
 netsh int ipv6 reset 
-ipconfig / >nul
 ipconfig /release >nul
 ipconfig /renew >nul
 ipconfig /flushdns >nul
@@ -328,9 +338,11 @@ rmdir /s /q "F:\MSOCache"
 del /f /s /q "F:\MSOCache\*.*"
 rmdir /s /q "F:\desktop.ini:CachedTiles" 
 del /f /s /q "F:\desktop.ini:CachedTiles\*.*"
-exit /b 
+cls
+goto menu
 
 :hwid
+cls
 curl -L "https://github.com/saawkt/fivem-spoofer/raw/refs/heads/main/amidewin.zip" -o "C:\Windows\Temp\amidewin.zip"
 echo wait...
 powershell -command "Expand-Archive -Path 'C:\Windows\Temp\amidewin.zip' -DestinationPath 'C:\Windows\temp\amidewin'"
@@ -367,4 +379,21 @@ net stop winmgmt /y
 net start winmgmt /y
 sc stop winmgmt
 sc start winmgmt
+cls
 goto global
+
+:warp
+cls
+echo downloading the installer...
+curl -L "https://downloads.cloudflareclient.com/v1/download/windows/ga" -o "C:\Windows\temp\warp.msi"
+start /b /wait "" "C:\Windows\temp\warp.msi" /passive >nul 2>&1
+del C:\Windows\temp\warp.msi
+cls
+echo your cloudflare warp has opened, is it in background, open to use
+timeout /t 5 /nobreak >nul 2>&1
+cls
+goto menu
+
+:exit3
+start https://discord.com/invite/ThYfJZNf2e
+exit /b
