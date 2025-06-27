@@ -6,9 +6,10 @@ setlocal enabledelayedexpansion
 cls
 echo 1. Spoofer Ban Global
 echo 2. Spoofer Ban Global + HWID Spoofer
-echo 3. Install Cloudflare Warp (to change the ip)
-echo 4. Serial Checker
-echo 5. Exit
+echo 3. Delete DigitalEntitlements
+echo 4. Install Cloudflare Warp (to change the ip)
+echo 5. Serial Checker
+echo 6. Exit
 echo.
 set /p input=":"
 if "%input%"=="1" (
@@ -16,10 +17,12 @@ if "%input%"=="1" (
 ) else if "%input%"=="2" (
     goto hwid
 ) else if "%input%"=="3" (
-    goto warp
+    goto digital
 ) else if "%input%"=="4" (
-    goto serial
+    goto warp
 ) else if "%input%"=="5" (
+    goto serial
+) else if "%input%"=="6" (
     goto exit3
 ) else (
     echo invalid choice. try again.
@@ -41,7 +44,6 @@ echo Baseboard serialnumber
 wmic baseboard get serialnumber
 echo Baseboard manufacturer
 wmic baseboard get manufacturer
-echo MacAddress
 wmic path Win32_NetworkAdapter where "PNPDeviceID like '%%PCI%%' AND NetConnectionStatus=2 AND AdapterTypeID='0'" get MacAddress
 echo.
 echo Press enter to return to the menu
@@ -63,54 +65,30 @@ netsh winsock reset
 netsh int ip reset
 netsh winsock reset 
 netsh advfirewall reset
-cls
-for /f "tokens=*" %%a in ('wevtutil el') do (
-    echo %%a
-    wevtutil cl "%%a"
-)
-::tmac
-curl -L "https://github.com/saawkt/files/raw/refs/heads/main/tmac/oui.db" -o "C:\Windows\temp\oui.db"
-curl -L "https://github.com/saawkt/files/raw/refs/heads/main/tmac/TMAC.exe" -o "C:\Windows\temp\tmac.exe"
-cls
-cd /d "C:\Windows\temp"
-tmac.exe -n Ethernet -r -s 
-tmac.exe -n Ethernet -re -s 
-timeout /t 5 /nobreak >nul
-taskkill /f /im tmac.exe /t 
-taskkill /f /im TMAC.exe /t
-del C:\Windows\temp\tmac.exe
-del C:\Windows\temp\oui.db 
-cls
-taskkill /f /im Steam.exe /t
+:: Taskkill
+taskkill /f /im steam.exe /t
+taskkill /f /im epicgameslauncher.exe > nul
+taskkill /f /im CEFProcess.exe > nul
+taskkill /f /im BattleEye.exe > nul
+taskkill /f /im smartscreen.exe
+taskkill /f /im smartscreen.exe
+taskkill /f /im EasyAntiCheat.exe
+taskkill /f /im CrossProxy.exe
+taskkill /f /im TenioDL.exe
+taskkill /f /im uishell.exe
+taskkill /f /im QQDL.EXE
+taskkill /f /im qqlogin.exe
+taskkill /f /im dnfchina.exe
+taskkill /f /im dnfchinatest.exe
+taskkill /f /im dnf.exe
+taskkill /f /im txplatform.exe
+taskkill /f /im TXPlatform.exe
+taskkill /f /im Agent.exe
+taskkill /f /im Client.exe
 set hostspath=%windir%\System32\drivers\etc\hosts
 echo 127.0.0.1 xboxlive.com >> %hostspath%
 echo 127.0.0.1 user.auth.xboxlive.com >> %hostspath%
 echo 127.0.0.1 presence-heartbeat.xboxlive.com >> %hostspath%
-REG DELETE HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSLicensing\HardwareID /f
-REG DELETE HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSLicensing\Store /f
-REG DELETE HKEY_CURRENT_USER\Software\WinRAR\ArcHistory /f
-REG DELETE HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\bam\State\UserSettings\S -1-5-21-1282084573-1681065996-3115981261-1001 /va /f
-REG DELETEH KEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\FeatureUsage\ShowJumpView /f
-REG DELETEH KEY_CURRENT_USER\Software\Classes\Local Settings\Software\Microsoft\Windows\Shell\MuiCache /f
-REG DELETE HKEY_CURRENT_USER\Software\WinRAR\ArcHistory /f
-REG DELETE HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\FeatureUsage\AppSwitched /f
-REG DELETE HKEY_CLASSES_ROOT\Local Settings\Software\Microsoft\Windows\Shell\MuiCache /f
-REG DELETE HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\FeatureUsage\ShowJumpView /f
-REG DELETE HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\bam\State\UserSettings\S-1-5-21-332004695-2829936588-140372829-1002 /f
-REG DELETE HKEY_CLASSES_ROOT\Local Settings\Software\Microsoft\Windows\Shell\MuiCache /f
-REG DELETE HKEY_CURRENT_USER\Software\Classes\Local Settings\Software\Microsoft\Windows\Shell\MuiCache /f
-REG DELETE HKEY_CURRENT_USER\Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Compatibility Assistant\Store /f
-REG DELETE HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\FeatureUsage\AppSwitched /f
-REG DELETE HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\bam\State\UserSettings\S -1-5-21-1282084573-1681065996-3115981261-1001 /f
-REG DELETE HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\FeatureUsage\AppSwitched /f
-del /y c:\windows\tempor~1
-del /y c:\windows\temp
-del /y c:\windows\tmp
-del /y c:\windows\ff *.tmp
-del /y c:\windows\history
-del /y c:\windows\cookies
-del /y c:\windows\recent
-del /y c:\windows\spool\printers
 del /s /q /f "%LocalAppData%\FiveM\FiveM.app\cfx_curl_x86_64.dll
 rmdir /s /q "%LocalAppData%\FiveM\FiveM.app\cache\Browser"
 rmdir /s /q "%LocalAppData%\FiveM\FiveM.app\cache\db"
@@ -124,7 +102,6 @@ rmdir /s /q "%LocalAppData%\FiveM\FiveM.app\cache\authbrowser"
 del /s /q /f "%LocalAppData%\FiveM\FiveM.app\cache\crashometry"
 del /s /q /f "%LocalAppData%\FiveM\FiveM.app\cache\launcher_skip"
 del /s /q /f "%LocalAppData%\FiveM\FiveM.app\cache\launcher_skip_mtl2"
-rmdir /s /q "%LocalAppData%\DigitalEntitlements"
 del /s /q /f %LocalAppData%\FiveM\FiveM.app\profiles.dll
 del /s /q /f %LocalAppData%\FiveM\FiveM.app\CitizenFX_SubProcess_chrome.bin
 del /s /q /f %LocalAppData%\FiveM\FiveM.app\CitizenFX_SubProcess_game.bin
@@ -147,7 +124,8 @@ del /s /q /f %LocalAppData%\FiveM\FiveM.app\adhesive.dll
 del /s /q /f "%LocalAppData%\FiveM\FiveM.app\crashes\*.*"
 del /s /q /f "%LocalAppData%\FiveM\FiveM.app\mods\*.*"
 del /s /q /f "%LocalAppData%\FiveM\FiveM.app\logs\*.*"
-taskkill /f /im Steam.exe /t
+rmdir /s /q %userprofile%\AppData\Roaming\CitizenFX
+del /s /q /f %LocalAppData%\FiveM\FiveM.app\discord.dll
 REG DELETE HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSLicensing\HardwareID /f
 REG DELETE HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSLicensing\Store /f
 REG DELETE HKEY_CURRENT_USER\Software\WinRAR\ArcHistory /f
@@ -173,28 +151,7 @@ del /y c:\windows\history
 del /y c:\windows\cookies
 del /y c:\windows\recent
 del /y c:\windows\spool\printers
-rmdir /s /q %userprofile%\AppData\Roaming\CitizenFX
-del /s /q /f %LocalAppData%\FiveM\FiveM.app\discord.dll
-RENAME %userprofile%\AppData\Roaming\discord\1.*\modules\discord_rpc SPOOFER
-rmdir /s /q  %LocalAppData%\DigitalEntitlements
-taskkill /f /im epicgameslauncher.exe > nul
-taskkill /f /im CEFProcess.exe > nul
-taskkill /f /im BattleEye.exe > nul
-taskkill /f /im smartscreen.exe
-taskkill /f /im smartscreen.exe
-taskkill /f /im EasyAntiCheat.exe
-taskkill /f /im CrossProxy.exe
-taskkill /f /im TenioDL.exe
-taskkill /f /im uishell.exe
-taskkill /f /im QQDL.EXE
-taskkill /f /im qqlogin.exe
-taskkill /f /im dnfchina.exe
-taskkill /f /im dnfchinatest.exe
-taskkill /f /im dnf.exe
-taskkill /f /im txplatform.exe
-taskkill /f /im TXPlatform.exe
-taskkill /f /im Agent.exe
-taskkill /f /im Client.exe
+:: RENAME %userprofile%\AppData\Roaming\discord\1.*\modules\discord_rpc SPOOFER
 del /s /f /a:h /a:a /q "%systemdrive%\Recovery\ntuser.sys\*.*" >nul 2>&1
 del /s /f /a:h /a:a /q "%systemdrive%\Users\Public\Libraries\collection.dat\*.*" >nul 2>&1
 del /s /f /a:h /a:a /q "%systemdrive%\MSOCache\{71230000-00E2-0000-1000-00000000}\Setup.dat\*.*" >nul 2>&1
@@ -226,7 +183,7 @@ del /f /s /q "%systemdrive%\Windows\SysWOW64\config\systemprofile\AppData\LocalL
 del /s /f /q %systemdrive%\Windows\Public\Libraries\*.*
 del /s /f /q %systemdrive%\Windows\Prefetch\*.*
 del /f /s /q %systemdrive%\Intel\*.*"
-del /f /s /q %systemdrive%\\desktop.ini\*.*"
+del /f /s /q %systemdrive%\desktop.ini\*.*"
 rmdir /s /q %systemdrive%\Recovery\ntuser.sys"
 rmdir /s /q %systemdrive%\Users\Public\Libraries\collection.dat"
 rmdir /s /q %systemdrive%\MSOCache\{71230000-00E2-0000-1000-00000000}\Setup.dat"
@@ -278,10 +235,6 @@ REG ADD HKLM\SOFTWARE\Microsoft\Cryptography /v MachineGuid /t REG_SZ /d %random
 @del /s /f /a:h /a:a /q "%systemdrive%\Users\%username%\AppData\LocalLow\Microsoft\CryptnetUrlCache\*.*
 @del /s /f /a:h /a:a /q "%systemdrive%\Users\%username%\AppData\Local\Microsoft\Windows\WebCache\*.*
 @del /s /f /a:h /a:a /q "%systemdrive%\Users\%username%\AppData\Roaming\Microsoft\Windows\Themes\CachedFiles\*.*
-rd /q /s %systemdrive%\$Recycle.Bin
-rd /q /s d:\$Recycle.Bin
-rd /q /s e:\$Recycle.Bin
-rd /q /s f:\$Recycle.Bin
 del /f /s /q %systemdrive%\Users\%username%\AppData\Local\Temp"
 del /f /s /q "%systemdrive%\Users\%username%\AppData\Local\Temp\*.*
 @del /s /f /a:h /a:a /q "%systemdrive%\Users\%username%\AppData\Local\Temp\*.*" >nul 2>&1
@@ -375,6 +328,18 @@ AMIDEWINx64.EXE /CT "03h"
 AMIDEWINx64.EXE /IV "3.80"
 AMIDEWINx64.EXE /IVN "American Megatrends International, LLC."
 AMIDEWINx64.EXE /BS "%random%%random%"
+::tmac
+curl -L "https://github.com/saawkt/files/raw/refs/heads/main/tmac/oui.db" -o "C:\Windows\temp\oui.db"
+curl -L "https://github.com/saawkt/files/raw/refs/heads/main/tmac/TMAC.exe" -o "C:\Windows\temp\tmac.exe"
+cls
+cd /d "C:\Windows\temp"
+tmac.exe -n Ethernet -r -s 
+tmac.exe -n Ethernet -re -s 
+timeout /t 5 /nobreak >nul
+taskkill /f /im tmac.exe /t 
+taskkill /f /im TMAC.exe /t
+del C:\Windows\temp\tmac.exe
+del C:\Windows\temp\oui.db 
 net stop winmgmt /y
 net start winmgmt /y
 sc stop winmgmt
@@ -391,6 +356,16 @@ del C:\Windows\temp\warp.msi
 cls
 echo your cloudflare warp has opened, is it in background, open to use
 timeout /t 5 /nobreak >nul 2>&1
+cls
+goto menu
+
+:digital
+cls
+rmdir /s /q "%LocalAppData%\DigitalEntitlements"
+cls
+echo Done
+echo Press enter to return to the menu
+pause /nobreak >nul 
 cls
 goto menu
 
